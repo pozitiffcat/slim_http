@@ -9,6 +9,8 @@
 namespace slim_http
 {
 
+class body;
+
 class request : public std::enable_shared_from_this<request>
 {
 public:
@@ -22,6 +24,7 @@ public:
     const std::string &version() const;
 
     void start(handler_func handler);
+    void write_body(const std::shared_ptr<body> &body, handler_func handler);
 
 private:
     enum state
@@ -44,6 +47,9 @@ private:
 private:
     boost::asio::ip::tcp::socket &_socket;
     std::array<char, 1024> _buffer;
+    size_t _buffer_position = 0;
+    size_t _buffer_size = 0;
+    size_t _buffer_available = 0;
     headers _headers;
     std::string _method;
     std::string _path;

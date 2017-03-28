@@ -10,6 +10,26 @@ server::server(boost::asio::io_service &service, int port)
     new_accept();
 }
 
+void server::add_GET_route_handler(const std::string &path, const std::shared_ptr<route_handler> &handler)
+{
+    _routes.add_GET_route_handler(path, handler);
+}
+
+void server::add_POST_route_handler(const std::string &path, const std::shared_ptr<body_route_handler> &handler)
+{
+    _routes.add_POST_route_handler(path, handler);
+}
+
+void server::add_PUT_route_handler(const std::string &path, const std::shared_ptr<body_route_handler> &handler)
+{
+    _routes.add_PUT_route_handler(path, handler);
+}
+
+void server::add_DELETE_route_handler(const std::string &path, const std::shared_ptr<route_handler> &handler)
+{
+    _routes.add_DELETE_route_handler(path, handler);
+}
+
 void server::new_accept()
 {
     auto conn = std::make_shared<connection>(_acceptor.get_io_service(), _routes);

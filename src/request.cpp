@@ -1,3 +1,4 @@
+#include "body.hpp"
 #include "request.hpp"
 
 namespace slim_http
@@ -33,7 +34,7 @@ void request::start(request::handler_func handler)
             {
                 this->parse_part(t);
 
-                if (_state != state_end)
+                if (_state != state_end && _state != state_body)
                     this->start(handler);
                 else
                     handler(boost::system::error_code());
@@ -48,6 +49,42 @@ void request::start(request::handler_func handler)
             handler(e);
         }
     });
+}
+
+void request::write_body(const std::shared_ptr<body> &body, handler_func handler)
+{
+    if (_state == state_body)
+    {
+        if (_buffer_position < _buffer_size)
+        {
+            body->put_bytes(_buffer.data() + _buffer_position, _buffer_size - _buffer_position);
+            size_t sz = (_buffer_size - _buffer_position);
+            _buffer_available -= (sz > _buffer_available ? _buffer_available : sz);
+        }
+
+        if (_buffer_available)
+        {
+            size_t for_read =_buffer_available > _buffer.size() ? _buffer.size() : _buffer_available;
+            auto self = shared_from_this();
+            _socket.async_read_some(boost::asio::buffer(_buffer), [this, body, handler, self](auto e, auto t){
+                if (!e)
+                {
+                    _buffer_position = 0;
+                    _buffer_size = t;
+                    this->write_body(body, handler);
+                }
+                else
+                {
+                    handler(e);
+                }
+            });
+        }
+        else
+        {
+            _state = state_end;
+            handler(boost::system::error_code());
+        }
+    }
 }
 
 void request::parse_part(size_t size)
@@ -109,15 +146,21 @@ void request::parse_part(size_t size)
         case state_last_header_n:
             if (c == '\n')
             {
-                // todo: if content length != 0 or chunked
-                // _state = state_body;
-                // else
-                _state = state_end;
+                auto content_length_opt = _headers.get("Content-Length");
+                if (content_length_opt)
+                {
+                    int content_length = std::stoi(content_length_opt.get());
+                    _state = state_body;
+                    _buffer_position = i + 1;
+                    _buffer_size = size;
+                    _buffer_available = content_length;
+                    return;
+                }
+                else
+                {
+                    _state = state_end;
+                }
             }
-            break;
-        case state_body:
-            // todo: ?????
-            _state = state_end;
             break;
         }
     }

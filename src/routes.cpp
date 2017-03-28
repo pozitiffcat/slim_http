@@ -3,19 +3,64 @@
 namespace slim_http
 {
 
-void routes::add(const std::string &method, const std::string &path, routes::handler_func handler)
+void routes::add_GET_route_handler(const std::string &path, const std::shared_ptr<route_handler> &handler)
 {
-    _handlers[std::make_pair(method, path)] = handler;
+    _GET_handlers[path] = handler;
 }
 
-boost::optional<routes::handler_func> routes::get(const std::string &method, const std::string &path) const
+void routes::add_POST_route_handler(const std::string &path, const std::shared_ptr<body_route_handler> &handler)
 {
-    auto it = _handlers.find(std::make_pair(method, path));
+    _POST_handlers[path] = handler;
+}
 
-    if (it == _handlers.end())
-        return boost::none;
-    else
+void routes::add_PUT_route_handler(const std::string &path, const std::shared_ptr<body_route_handler> &handler)
+{
+    _PUT_handlers[path] = handler;
+}
+
+void routes::add_DELETE_route_handler(const std::string &path, const std::shared_ptr<route_handler> &handler)
+{
+    _DELETE_handlers[path] = handler;
+}
+
+boost::optional<std::shared_ptr<route_handler> > routes::get_GET_route_handler(const std::string &path) const
+{
+    auto it = _GET_handlers.find(path);
+
+    if (it != _GET_handlers.end())
         return it->second;
+    else
+        return boost::none;
+}
+
+boost::optional<std::shared_ptr<body_route_handler> > routes::get_POST_route_handler(const std::string &path) const
+{
+    auto it = _POST_handlers.find(path);
+
+    if (it != _POST_handlers.end())
+        return it->second;
+    else
+        return boost::none;
+}
+
+boost::optional<std::shared_ptr<body_route_handler> > routes::get_PUT_route_handler(const std::string &path) const
+{
+    auto it = _PUT_handlers.find(path);
+
+    if (it != _PUT_handlers.end())
+        return it->second;
+    else
+        return boost::none;
+}
+
+boost::optional<std::shared_ptr<route_handler> > routes::get_DELETE_route_handler(const std::string &path) const
+{
+    auto it = _DELETE_handlers.find(path);
+
+    if (it != _DELETE_handlers.end())
+        return it->second;
+    else
+        return boost::none;
 }
 
 }

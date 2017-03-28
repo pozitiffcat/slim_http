@@ -23,7 +23,7 @@ void headers::remove_all(const std::string &name)
     }));
 }
 
-boost::optional<std::string> headers::get(std::string &name) const
+boost::optional<std::string> headers::get(const std::string &name) const
 {
     auto it = std::find_if(_headers.begin(), _headers.end(), [name](const auto &p){
         return p.first == name;
