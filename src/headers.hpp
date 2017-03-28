@@ -3,6 +3,7 @@
 
 #include <list>
 #include <string>
+#include <boost/optional.hpp>
 
 namespace slim_http
 {
@@ -13,8 +14,7 @@ public:
     void append(const std::string &name, const std::string &value);
     void replace(const std::string &name, const std::string &value);
     void remove_all(const std::string &name);
-    bool has(const std::string &name);
-    std::string get(std::string &name);
+    boost::optional<std::string> get(std::string &name);
 
 private:
     std::list<std::pair<std::string, std::string>> _headers;

@@ -23,23 +23,16 @@ void headers::remove_all(const std::string &name)
     }));
 }
 
-bool headers::has(const std::string &name)
-{
-    return std::find_if(_headers.begin(), _headers.end(), [name](const auto &p){
-        return p.first == name;
-    }) != _headers.end();
-}
-
-std::string headers::get(std::string &name)
+boost::optional<std::string> headers::get(std::string &name)
 {
     auto it = std::find_if(_headers.begin(), _headers.end(), [name](const auto &p){
         return p.first == name;
     });
 
     if (it == _headers.end())
-        throw std::runtime_error("Header not found: " + name);
-
-    return it->second;
+        return boost::none;
+    else
+        return it->second;
 }
 
 }
