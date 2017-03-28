@@ -20,7 +20,7 @@ void headers::remove_all(const std::string &name)
 {
     _headers.erase(std::remove_if(_headers.begin(), _headers.end(), [name](const auto &p){
         return p.first == name;
-    }));
+    }), _headers.end());
 }
 
 boost::optional<std::string> headers::get(const std::string &name) const
@@ -33,6 +33,11 @@ boost::optional<std::string> headers::get(const std::string &name) const
         return boost::none;
     else
         return it->second;
+}
+
+const std::list<std::pair<std::string, std::string> > &headers::get_pair_list() const
+{
+    return _headers;
 }
 
 }

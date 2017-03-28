@@ -37,7 +37,7 @@ void connection::start()
             auto response_handler = [this, res, self](auto e){
                 if (e)
                 {
-                    BOOST_LOG_TRIVIAL(debug) << "response has error" << e.message();
+                    BOOST_LOG_TRIVIAL(error) << "response has error" << e.message();
                 }
                 else
                 {
@@ -76,7 +76,7 @@ void connection::start()
                         }
                         else
                         {
-                            BOOST_LOG_TRIVIAL(debug) << "request body has error" << e.message();
+                            BOOST_LOG_TRIVIAL(error) << "request body has error" << e.message();
                         }
                     });
                 }
@@ -101,7 +101,7 @@ void connection::start()
                         }
                         else
                         {
-                            BOOST_LOG_TRIVIAL(debug) << "request body has error" << e.message();
+                            BOOST_LOG_TRIVIAL(error) << "request body has error" << e.message();
                         }
                     });
                 }
@@ -128,7 +128,7 @@ void connection::start()
         }
         else
         {
-            BOOST_LOG_TRIVIAL(debug) << "request has error" << e.message();
+            BOOST_LOG_TRIVIAL(error) << "request has error" << e.message();
         }
     });
 }

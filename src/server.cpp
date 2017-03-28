@@ -38,7 +38,7 @@ void server::new_accept()
         if (!e)
         {
             BOOST_LOG_TRIVIAL(debug) << "accepted new connection";
-            //this->new_accept();
+            this->new_accept();
             conn->start();
         }
         else
