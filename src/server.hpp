@@ -4,6 +4,8 @@
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 
+#include "routes.hpp"
+
 namespace slim_http
 {
 
@@ -17,6 +19,7 @@ private:
 
 private:
     boost::asio::ip::tcp::acceptor _acceptor;
+    routes _routes;
 };
 
 }

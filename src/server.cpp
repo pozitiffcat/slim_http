@@ -12,7 +12,7 @@ server::server(boost::asio::io_service &service, int port)
 
 void server::new_accept()
 {
-    auto conn = std::make_shared<connection>(_acceptor.get_io_service());
+    auto conn = std::make_shared<connection>(_acceptor.get_io_service(), _routes);
 
     _acceptor.async_accept(conn->get_socket(), [this, conn](auto e){
         if (!e)

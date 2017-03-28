@@ -7,10 +7,12 @@
 namespace slim_http
 {
 
+class routes;
+
 class connection : public std::enable_shared_from_this<connection>
 {
 public:
-    explicit connection(boost::asio::io_service &service);
+    connection(boost::asio::io_service &service, const routes &r);
     ~connection();
 
     boost::asio::ip::tcp::socket &get_socket();
@@ -19,6 +21,7 @@ public:
 
 private:
     boost::asio::ip::tcp::socket _socket;
+    const routes &_routes;
 };
 
 }

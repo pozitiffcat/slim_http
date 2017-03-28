@@ -5,8 +5,9 @@
 namespace slim_http
 {
 
-slim_http::connection::connection(boost::asio::io_service &service)
-    : _socket(service)
+slim_http::connection::connection(boost::asio::io_service &service, const routes &r)
+    : _socket(service),
+      _routes(r)
 {
 }
 
@@ -31,7 +32,9 @@ void connection::start()
         {
             auto res = std::make_shared<response>(_socket);
 
-            // work with res
+            // todo: read request body
+
+            // todo: write response body
 
             res->start([this, res, self](auto e){
                 if (e)
