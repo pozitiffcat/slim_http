@@ -14,7 +14,7 @@ class body_route_handler
 {
 public:
     virtual ~body_route_handler() = default;
-    virtual void prepare_response(const body *body, const request &req, response &res) const = 0;
+    virtual void prepare_response(const body *b, const request &req, response &res) const = 0;
     virtual std::shared_ptr<body> make_body() const = 0;
 };
 
