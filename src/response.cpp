@@ -1,4 +1,5 @@
 #include "response.hpp"
+#include "async_token.hpp"
 #include "response_body.hpp"
 
 namespace slim_http
@@ -29,7 +30,28 @@ void response::set_header(const std::string &name, const std::string &value)
     _headers.replace(name, value);
 }
 
+std::shared_ptr<async_token> response::set_async()
+{
+    _async_token = std::make_shared<async_token>();
+    return _async_token;
+}
+
 void response::start(response::handler_func handler)
+{
+    if (_async_token)
+    {
+        auto self = shared_from_this();
+        _async_token->set_handler([this, handler, self](){
+            write_response(handler);
+        });
+    }
+    else
+    {
+        write_response(handler);
+    }
+}
+
+void response::write_response(response::handler_func handler)
 {
     std::stringstream str_str;
     str_str << "HTTP/1.1 " << _response_code << "\r\n";
